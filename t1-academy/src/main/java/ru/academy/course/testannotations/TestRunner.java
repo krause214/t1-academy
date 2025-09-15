@@ -5,15 +5,14 @@ import ru.academy.course.test.AbstractAcademyTest;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class TestRunner {
 
-    public static void runTests(Class<? extends AbstractAcademyTest> c) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+    public static void runTests(Class<? extends AbstractAcademyTest> c) throws Exception {
         try {
             Constructor<?> constructor = c.getConstructor();
             Object instance = constructor.newInstance();
@@ -39,6 +38,10 @@ public class TestRunner {
                 }
             }
 
+            testMethodList.sort(
+                    Comparator.comparingInt(a -> a.getAnnotation(AcademyTest.class).priority())
+            );
+
             for (Method testMethod : testMethodList) {
                 executeBeforeSuite(beforeSuiteMethod, instance);
                 executeTest(testMethod, instance, c);
@@ -55,28 +58,37 @@ public class TestRunner {
     }
 
     private static void validateTestClass(Method[] methods) throws AcademyTestException {
-        long beforeSuiteMethodCount = Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(BeforeSuite.class))
-                .count();
-        if (beforeSuiteMethodCount > 1) {
-            throw new AcademyTestException("Найдено методов BeforeSuite больше одного!");
+        long beforeSuiteMethodCount = 0;
+        long afterSuiteMethodCount = 0;
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(BeforeSuite.class)) {
+                beforeSuiteMethodCount++;
+            } else if (method.isAnnotationPresent(AfterSuite.class)) {
+                afterSuiteMethodCount++;
+            }
         }
 
-        long afterSuiteMethodCount = Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(AfterSuite.class))
-                .count();
+        String errorMessage = "";
+
+        if (beforeSuiteMethodCount > 1) {
+            errorMessage = "Найдено методов BeforeSuite больше одного!; ";
+        }
         if (afterSuiteMethodCount > 1) {
-            throw new AcademyTestException("Найдено методов AfterSuite больше одного!");
+            errorMessage = errorMessage.concat("Найдено методов AfterSuite больше одного!; ");
+        }
+
+        if (!errorMessage.isEmpty()) {
+            throw new AcademyTestException(errorMessage);
         }
     }
 
-    private static void executeAfterSuite(Method afterSuiteMethod, Object instance) throws AcademyTestException, InvocationTargetException, IllegalAccessException {
+    private static void executeAfterSuite(Method afterSuiteMethod, Object instance) throws Exception {
         if (afterSuiteMethod != null) {
             afterSuiteMethod.invoke(instance);
         }
     }
 
-    private static void executeTest(Method testMethod, Object instance, Class<? extends AbstractAcademyTest> c) throws AcademyTestException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+    private static void executeTest(Method testMethod, Object instance, Class<? extends AbstractAcademyTest> c) throws Exception {
         System.out.println("Выполняется тест " + testMethod.getName());
         testMethod.invoke(instance);
         Field testPassedField = c.getSuperclass().getDeclaredField("testPassed");
@@ -95,7 +107,7 @@ public class TestRunner {
         }
     }
 
-    private static void executeBeforeSuite(Method beforeSuiteMethod, Object instance) throws AcademyTestException, InvocationTargetException, IllegalAccessException {
+    private static void executeBeforeSuite(Method beforeSuiteMethod, Object instance) throws Exception {
         if (beforeSuiteMethod != null) {
             beforeSuiteMethod.invoke(instance);
         }

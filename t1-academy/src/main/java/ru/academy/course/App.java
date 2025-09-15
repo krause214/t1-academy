@@ -6,7 +6,7 @@ import ru.academy.course.testannotations.TestRunner;
 import java.lang.reflect.InvocationTargetException;
 
 public class App {
-    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+    public static void main(String[] args) throws Exception {
         TestRunner.runTests(FountainTest.class);
     }
 }

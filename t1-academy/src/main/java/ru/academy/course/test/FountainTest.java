@@ -17,7 +17,7 @@ public class FountainTest extends AbstractAcademyTest {
     }
 
     @AfterSuite
-    void returnDefaultStatement() throws NoSuchFieldException, IllegalAccessException {
+    void returnDefaultStatement() throws Exception {
         fountain.disable();
         fountain.disconnectFromWaterSupply();
         Field field = fountain.getClass().getDeclaredField("force");
@@ -25,8 +25,8 @@ public class FountainTest extends AbstractAcademyTest {
         field.set(fountain, null);
     }
 
-    @AcademyTest
-    void tryToEnableFountainWithNoWaterTest() throws NoSuchFieldException, IllegalAccessException {
+    @AcademyTest(priority = 3)
+    void tryToEnableFountainWithNoWaterTest() throws Exception {
         fountain.enable();
 
         Field enabledField = fountain.getClass().getDeclaredField("enabled");
@@ -39,8 +39,8 @@ public class FountainTest extends AbstractAcademyTest {
         }
     }
 
-    @AcademyTest
-    void tryToEnableFountainWithWaterTest() throws NoSuchFieldException, IllegalAccessException {
+    @AcademyTest(priority = 1)
+    void tryToEnableFountainWithWaterTest() throws Exception {
         fountain.connectToWaterSupply();
         fountain.enable();
         Field enabledField = fountain.getClass().getDeclaredField("enabled");
