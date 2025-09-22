@@ -1,4 +1,4 @@
-package ru.academy.course.fountain;
+package ru.academy.course.entity;
 
 public class Fountain {
 

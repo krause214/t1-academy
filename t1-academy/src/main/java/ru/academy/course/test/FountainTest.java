@@ -1,6 +1,6 @@
 package ru.academy.course.test;
 
-import ru.academy.course.fountain.Fountain;
+import ru.academy.course.entity.Fountain;
 import ru.academy.course.testannotations.AcademyTest;
 import ru.academy.course.testannotations.AfterSuite;
 import ru.academy.course.testannotations.BeforeSuite;
