@@ -5,22 +5,18 @@ import java.util.LinkedList;
 public class ThreadPoolImplementation {
 
     private final LinkedList<Runnable> taskQueue;
-    private final Object monitor = new Object();
-    private final Object terminationMonitor = new Object();
-    private Thread[] threadPool;
-    private Boolean isTerminated;
-    private int terminationCounter;
+    private final Thread[] threads;
+    private volatile Boolean isTerminated;
 
     public ThreadPoolImplementation(int capacity) {
         this.taskQueue = new LinkedList<>();
-        this.threadPool = new Executor[capacity];
+        this.threads = new Executor[capacity];
         this.isTerminated = Boolean.FALSE;
-        this.terminationCounter = 4;
 
         for (int i = 0; i < capacity; i++) {
             Thread thread = new Executor("Executor-" + i);
             thread.start();
-            threadPool[i] = thread;
+            threads[i] = thread;
         }
     }
 
@@ -28,9 +24,9 @@ public class ThreadPoolImplementation {
         if (isTerminated) {
             throw new IllegalArgumentException("Thread pool is terminated");
         }
-        synchronized (monitor) {
+        synchronized (taskQueue) {
             taskQueue.offer(task);
-            monitor.notifyAll();
+            taskQueue.notifyAll();
         }
     }
 
@@ -39,23 +35,9 @@ public class ThreadPoolImplementation {
     }
 
     public void awaitTermination() throws InterruptedException {
-        Thread awaitThread = new Thread(
-                () -> {
-                    synchronized (terminationMonitor) {
-                        while (this.terminationCounter > 0) {
-                            try {
-                                terminationMonitor.wait();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-                    System.out.println("AWAITING ENDS");
-                }
-        );
-
-        awaitThread.start();
-        awaitThread.join();
+        for (int i = 0; i < threads.length; i++) {
+            threads[i].join();
+        }
     }
 
     private class Executor extends Thread {
@@ -72,23 +54,18 @@ public class ThreadPoolImplementation {
                     Runnable task;
                     synchronized (taskQueue) {
                         task = taskQueue.poll();
+                        if (task == null) {
+                            taskQueue.wait();
+                        }
                     }
                     if (task != null) {
                         System.out.println(this.getName() + " RUNS TASK");
                         task.run();
                         System.out.println(this.getName() + " COMPLETE TASK");
-                    } else {
-                        synchronized (monitor) {
-                            monitor.wait();
-                        }
                     }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            synchronized (terminationMonitor) {
-                terminationCounter--;
-                terminationMonitor.notify();
             }
             System.out.println(this.getName() + " CLOSED");
         }
