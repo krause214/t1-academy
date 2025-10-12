@@ -1,9 +1,11 @@
 package ru.academy.course.spirngcontext;
 
-import java.sql.SQLException;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class UserService {
 
     private final UserDao userDao;

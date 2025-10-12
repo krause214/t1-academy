@@ -1,12 +1,12 @@
 package ru.academy.course;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import ru.academy.course.concurrency.ThreadPoolImplementation;
-import ru.academy.course.config.Configuration;
+import ru.academy.course.config.ApplicationConfiguration;
 import ru.academy.course.entity.Position;
 import ru.academy.course.entity.Worker;
 import ru.academy.course.spirngcontext.User;
-import ru.academy.course.spirngcontext.UserDao;
 import ru.academy.course.spirngcontext.UserService;
 import ru.academy.course.stream.StreamTask;
 import ru.academy.course.test.FountainTest;
@@ -15,9 +15,10 @@ import ru.academy.course.testannotations.TestRunner;
 import java.util.List;
 import java.util.Random;
 
+@ComponentScan
 public class App {
     public static void main(String[] args) throws Exception {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Configuration.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(App.class);
 
         UserService userService = (UserService) context.getBean("userService");
 
