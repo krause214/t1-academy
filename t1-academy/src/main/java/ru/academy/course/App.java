@@ -1,30 +1,60 @@
 package ru.academy.course;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import ru.academy.course.concurrency.ThreadPoolImplementation;
+import ru.academy.course.config.ApplicationConfiguration;
+import ru.academy.course.entity.Position;
+import ru.academy.course.entity.Worker;
+import ru.academy.course.spirngcontext.User;
+import ru.academy.course.spirngcontext.UserService;
+import ru.academy.course.stream.StreamTask;
+import ru.academy.course.test.FountainTest;
+import ru.academy.course.testannotations.TestRunner;
 
+import java.util.List;
 import java.util.Random;
 
+@ComponentScan
 public class App {
     public static void main(String[] args) throws Exception {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(App.class);
 
-        ThreadPoolImplementation threadPool = new ThreadPoolImplementation(4);
+        UserService userService = (UserService) context.getBean("userService");
 
-        addTasks(threadPool, 10);
+        User user = userService.createUser(new User("some_username"));
+        userService.deleteUser(user.getId());
 
-        Thread.sleep(10000);
+        user = userService.createUser(user);
+        user.setUsername("other_username");
+        userService.updateUser(user);
 
-        addTasks(threadPool, 15);
+        List<User> userToCreate = List.of(
+                new User("Pupa"),
+                new User("Lupa"),
+                new User("abvgd"),
+                new User("PUPUPU"),
+                new User("other_username")
+        );
 
-        Thread.sleep(2000);
+        List<User> createdUser = userService.createUsers(userToCreate);
 
-        threadPool.shutdown();
-        threadPool.awaitTermination();
+        List<Long> idListToGet = List.of(
+                createdUser.get(0).getId(),
+                createdUser.get(1).getId()
+        );
 
-        System.out.println("MAIN PROCESS ENDS");
+        List<User> getUserList = userService.getUsers(idListToGet);
 
-        //TestRunner.runTests(FountainTest.class);
+        User userToDelete = createdUser.get(0);
+        userService.deleteUser(userToDelete.getId());
+        userService.deleteUser(userToDelete.getId());
 
-        /*List<Integer> integerList = List.of(1, 10, 12, 5, 64, 22, 123, 1, 123);
+        List<User> getAllUsers = userService.getAllUsers();
+    }
+
+    private static void executeStreamApiTask() {
+        List<Integer> integerList = List.of(1, 10, 12, 5, 64, 22, 123, 1, 123);
         List<Worker> workerList = List.of(
                 new Worker("Alex", 70, Position.ENGINEER),
                 new Worker("Fedor", 21, Position.MANAGER),
@@ -49,7 +79,28 @@ public class App {
         System.out.println(StreamTask.getMostLongWord(stringList));
         System.out.println(StreamTask.getWordCountedMap(stroka));
         StreamTask.stringPrinterByLength(stringList);
-        System.out.println(StreamTask.getMostLongInnerWord(sentenceList));*/
+        System.out.println(StreamTask.getMostLongInnerWord(sentenceList));
+    }
+
+    private static void executeTestTask() throws Exception {
+        TestRunner.runTests(FountainTest.class);
+    }
+
+    private static void executeConcurrencyTask() throws InterruptedException {
+        ThreadPoolImplementation threadPool = new ThreadPoolImplementation(4);
+
+        addTasks(threadPool, 10);
+
+        Thread.sleep(10000);
+
+        addTasks(threadPool, 15);
+
+        Thread.sleep(2000);
+
+        threadPool.shutdown();
+        threadPool.awaitTermination();
+
+        System.out.println("MAIN PROCESS ENDS");
     }
 
     private static void addTasks(ThreadPoolImplementation threadPool, int amount) {
