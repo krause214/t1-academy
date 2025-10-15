@@ -1,13 +1,12 @@
-package ru.academy.course;
+package ru.academy.course.springboot;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.academy.course.concurrency.ThreadPoolImplementation;
-import ru.academy.course.config.ApplicationConfiguration;
 import ru.academy.course.entity.Position;
 import ru.academy.course.entity.Worker;
-import ru.academy.course.spirngcontext.User;
-import ru.academy.course.spirngcontext.UserService;
 import ru.academy.course.stream.StreamTask;
 import ru.academy.course.test.FountainTest;
 import ru.academy.course.testannotations.TestRunner;
@@ -16,10 +15,14 @@ import java.util.List;
 import java.util.Random;
 
 @ComponentScan
+@EnableJpaRepositories(basePackages = "ru.academy.course.springboot.repository")
+@SpringBootApplication
 public class App {
     public static void main(String[] args) throws Exception {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(App.class);
+        SpringApplication.run(App.class, args);
+    }
 
+    /*private static void executeSpringContextTask(AnnotationConfigApplicationContext context) {
         UserService userService = (UserService) context.getBean("userService");
 
         User user = userService.createUser(new User("some_username"));
@@ -51,7 +54,7 @@ public class App {
         userService.deleteUser(userToDelete.getId());
 
         List<User> getAllUsers = userService.getAllUsers();
-    }
+    }*/
 
     private static void executeStreamApiTask() {
         List<Integer> integerList = List.of(1, 10, 12, 5, 64, 22, 123, 1, 123);

@@ -1,12 +1,12 @@
-package ru.academy.course.spirngcontext;
+package ru.academy.course.dbconnection;
 
-import org.springframework.stereotype.Component;
+import ru.academy.course.springboot.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class UserDao {
 
     private final Connection connection;
