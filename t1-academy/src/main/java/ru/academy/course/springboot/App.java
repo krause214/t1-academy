@@ -14,47 +14,11 @@ import ru.academy.course.testannotations.TestRunner;
 import java.util.List;
 import java.util.Random;
 
-@ComponentScan
-@EnableJpaRepositories(basePackages = "ru.academy.course.springboot.repository")
 @SpringBootApplication
 public class App {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(App.class, args);
     }
-
-    /*private static void executeSpringContextTask(AnnotationConfigApplicationContext context) {
-        UserService userService = (UserService) context.getBean("userService");
-
-        User user = userService.createUser(new User("some_username"));
-        userService.deleteUser(user.getId());
-
-        user = userService.createUser(user);
-        user.setUsername("other_username");
-        userService.updateUser(user);
-
-        List<User> userToCreate = List.of(
-                new User("Pupa"),
-                new User("Lupa"),
-                new User("abvgd"),
-                new User("PUPUPU"),
-                new User("other_username")
-        );
-
-        List<User> createdUser = userService.createUsers(userToCreate);
-
-        List<Long> idListToGet = List.of(
-                createdUser.get(0).getId(),
-                createdUser.get(1).getId()
-        );
-
-        List<User> getUserList = userService.getUsers(idListToGet);
-
-        User userToDelete = createdUser.get(0);
-        userService.deleteUser(userToDelete.getId());
-        userService.deleteUser(userToDelete.getId());
-
-        List<User> getAllUsers = userService.getAllUsers();
-    }*/
 
     private static void executeStreamApiTask() {
         List<Integer> integerList = List.of(1, 10, 12, 5, 64, 22, 123, 1, 123);

@@ -2,6 +2,7 @@ package ru.academy.course.springboot.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -14,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
     public User(String username) {
