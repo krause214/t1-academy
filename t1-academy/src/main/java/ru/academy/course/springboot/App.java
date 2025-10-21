@@ -1,13 +1,12 @@
-package ru.academy.course;
+package ru.academy.course.springboot;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.academy.course.concurrency.ThreadPoolImplementation;
-import ru.academy.course.config.ApplicationConfiguration;
 import ru.academy.course.entity.Position;
 import ru.academy.course.entity.Worker;
-import ru.academy.course.spirngcontext.User;
-import ru.academy.course.spirngcontext.UserService;
 import ru.academy.course.stream.StreamTask;
 import ru.academy.course.test.FountainTest;
 import ru.academy.course.testannotations.TestRunner;
@@ -15,42 +14,10 @@ import ru.academy.course.testannotations.TestRunner;
 import java.util.List;
 import java.util.Random;
 
-@ComponentScan
+@SpringBootApplication
 public class App {
     public static void main(String[] args) throws Exception {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(App.class);
-
-        UserService userService = (UserService) context.getBean("userService");
-
-        User user = userService.createUser(new User("some_username"));
-        userService.deleteUser(user.getId());
-
-        user = userService.createUser(user);
-        user.setUsername("other_username");
-        userService.updateUser(user);
-
-        List<User> userToCreate = List.of(
-                new User("Pupa"),
-                new User("Lupa"),
-                new User("abvgd"),
-                new User("PUPUPU"),
-                new User("other_username")
-        );
-
-        List<User> createdUser = userService.createUsers(userToCreate);
-
-        List<Long> idListToGet = List.of(
-                createdUser.get(0).getId(),
-                createdUser.get(1).getId()
-        );
-
-        List<User> getUserList = userService.getUsers(idListToGet);
-
-        User userToDelete = createdUser.get(0);
-        userService.deleteUser(userToDelete.getId());
-        userService.deleteUser(userToDelete.getId());
-
-        List<User> getAllUsers = userService.getAllUsers();
+        SpringApplication.run(App.class, args);
     }
 
     private static void executeStreamApiTask() {
