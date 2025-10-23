@@ -2,8 +2,10 @@ package ru.academy.course.springboot.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -17,6 +19,19 @@ public class User {
 
     @Column(name = "username", nullable = false)
     private String username;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Product> products = new HashSet<>();
+
+    public void addProduct(Product product) {
+        products.add(product);
+        product.setUser(this);
+    }
+
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.setUser(null);
+    }
 
     public User(String username) {
         this.username = username;

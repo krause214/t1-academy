@@ -8,22 +8,19 @@ import org.springframework.stereotype.Component;
 import ru.academy.course.springboot.entity.User;
 import ru.academy.course.springboot.model.ProductDto;
 import ru.academy.course.springboot.model.ListProductResponseDto;
-import ru.academy.course.springboot.repository.UserRepository;
+import ru.academy.course.springboot.repository.ProductRepository;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserService {
+public class ProductService {
 
-    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
-    public ListProductResponseDto getUserProducts(Long userId) {
-        return new ListProductResponseDto(userRepository.findById(userId)
-                .map(User::getProducts)
-                .orElseThrow(EntityNotFoundException::new)
-                .stream()
+    public ProductDto getProduct(Long productId) {
+        return productRepository.findById(productId)
                 .map(product -> new ProductDto(product.getAccountNumber(), product.getBalance(), product.getProductType()))
-                .toList());
+                .orElseThrow(EntityNotFoundException::new);
     }
 }
