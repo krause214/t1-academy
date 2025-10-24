@@ -5,6 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.academy.pay.config.ProductClientConfiguration;
+import ru.academy.pay.config.RestTemplateResponseErrorHandler;
 import ru.academy.pay.model.ListProductResponseDto;
 import ru.academy.pay.model.ProductDto;
 import ru.academy.pay.model.ProductPaymentExecutionDto;
@@ -19,12 +20,14 @@ public class ProductClient {
 
     private final ProductClientConfiguration configuration;
 
-    public ProductClient(ProductClientConfiguration configuration) {
+    public ProductClient(ProductClientConfiguration configuration,
+                         RestTemplateResponseErrorHandler restTemplateResponseErrorHandler) {
         this.configuration = configuration;
         this.client = new RestTemplateBuilder()
                 .rootUri(configuration.getUri())
                 .connectTimeout(configuration.getConnectTimeout())
                 .readTimeout(configuration.getReadTimeout())
+                .errorHandler(restTemplateResponseErrorHandler)
                 .build();
     }
 

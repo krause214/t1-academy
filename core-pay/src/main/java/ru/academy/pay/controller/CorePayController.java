@@ -21,7 +21,7 @@ public class CorePayController {
     }
 
     @PostMapping("/payment/execute")
-    public ResponseEntity<PaymentExecutionResponseDto> executePayment(@RequestBody PaymentRequestDto requestDto) {
-        return ResponseEntity.ok(corePayService.handleRequest(requestDto));
+    public PaymentExecutionResponseDto executePayment(@RequestBody PaymentRequestDto requestDto) {
+        return corePayService.handleRequest(requestDto);
     }
 }
