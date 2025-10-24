@@ -1,4 +1,4 @@
-package ru.academy.course.springboot.model;
+package ru.academy.pay.model;
 
 import java.util.List;
 

@@ -1,6 +1,4 @@
-package ru.academy.course.springboot.model;
-
-import ru.academy.course.springboot.entity.ProductType;
+package ru.academy.pay.model;
 
 import java.math.BigDecimal;
 
